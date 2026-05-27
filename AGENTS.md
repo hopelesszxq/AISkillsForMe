@@ -1,54 +1,60 @@
-# AGENTS
+# AGENTS — AISkillsForMe
 
-This file is for AI agents (Hermes, Claude Code, Codex) working in this project.
+This file tells AI agents how to work with this project.
 
 ## Project Overview
 
-TODO: Describe what this project does, who it is for, and what problem it solves.
+A curated collection of development skills/rules organized by tech stack. Each file is a reusable skill document following the SKILL.md format — designed to be loaded by AI coding assistants (Hermes Agent, Claude Code, Cursor, etc.) to follow best practices for specific technologies.
 
-## Build Commands
+## Tech Stack Categories
 
-```bash
-npm install
-npm run dev
-npm run build
-npm run typecheck
+| Category | Sub-topics |
+|---|---|
+| **spring-cloud** | Nacos, Gateway, Sentinel, Feign, Seata |
+| **vue3** | Composition API, Pinia, Router, Vite |
+| **postgresql** | SQL, indexing, migration, connection pool |
+| **redis** | Cache, distributed lock, Redisson, pub/sub |
+| **minio** | Object storage, S3 API, presigned URL |
+| **onlyoffice** | Document server, online editing, callback |
+| **rabbitmq** | AMQP, exchanges, DLQ, publisher confirm |
+| **rocketmq** | Transaction message, ordered message, delayed |
+| **mybatis-plus** | Lambda query, pagination, auto-fill |
+| **tools** | Git, Docker, Maven, Gradle |
+| **patterns** | Microservice, DDD, design patterns |
+
+## How to Use
+
+When working on a specific technology, the AI agent should:
+
+1. Check if a skill file exists under `skills/<category>/`
+2. Load the relevant skill(s) to follow best practices
+3. Cross-reference related categories when applicable
+
+## File Format Convention
+
+Every `.md` file in skills/ follows this frontmatter format:
+
+```yaml
+---
+name: short-hyphenated-name
+description: One-line description
+tags: [tag1, tag2, tag3]
+---
 ```
 
-## Architecture
+## Contribution Guidelines
 
-TODO: Describe data flow and service ownership.
+- One skill file per focused topic
+- Frontmatter metadata required (name, description, tags)
+- Keep content practical — best practices, code snippets, pitfalls
+- Include real configuration examples where applicable
 
-## Security Baseline
+## Build / Validate
 
-- Validate all input server-side
-- Never trust client-provided identity, scope, or permissions
-- Use Supabase RLS for row-level data isolation
-- Store secrets in .env.local — never commit credentials
-- No secrets in logs or error messages
-- Follow OWASP Top 10
+```bash
+# Count skills by category
+for d in skills/*/; do echo "$(find $d -name '*.md' | wc -l) $d"; done
 
-## Engine Guidance
-
-- Complex multi-file changes, new features → Claude Code
-- Quick targeted fixes, single-file changes → Codex
-- Deploy, monitor, notify, schedule → Hermes
-- UI/UX exploration before coding → Claude Design (human step)
-- Not sure? Tell Hermes: run choose-engine
-
-## Monitoring
-
-- Health endpoint: /api/health
-- Error tracking: Sentry
-- Uptime: Uptime Kuma polling /api/health every 60s
-
-## Deployment
-
-- Platform: Vercel
-- Production: main branch → automatic deploy
-- Preview: feature branches → preview deployment
-
-## Commit Conventions
-
-- One commit per meaningful change
-- Never commit .env.local or credentials
+# Validate all files have frontmatter
+for f in $(find skills -name '*.md'); do head -3 "$f" | grep -q "^---$" && echo "✓ $f" || echo "✗ missing frontmatter: $f"; done
+```
