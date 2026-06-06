@@ -98,3 +98,23 @@ public class CustomOAuth2Interceptor implements RequestInterceptor {
 - Token 自动刷新由 OAuth2AuthorizedClientManager 内置处理，过期前自动获取新 Token
 - 生产环境应使用 Vault / Kubernetes Secret 等管理 client-secret，避免硬编码
 - 不同微服务间的 Feign 调用链中，建议在网关层统一 Token 透传，避免每个服务各自获取 Token
+
+## 常见坑点
+
+### clientRegistrationId 属性名格式（Feign 4.3.2+ 修复）
+
+Feign 4.3.2 之前，`spring.cloud.openfeign.oauth2.clientRegistrationId` 的值**只接受 CamelCase**，如果使用 dash-case（短横线）则配置不生效：
+
+```properties
+# ❌ Feign 4.3.2 前不生效
+spring.cloud.openfeign.oauth2.clientRegistrationId=my-oauth-client
+
+# ✅ 必须使用 CamelCase
+spring.cloud.openfeign.oauth2.clientRegistrationId=myOauthClient
+```
+
+**解决方案**：
+- 升级到 Feign 4.3.2+（两种格式均可）
+- 或统一使用 CamelCase 作为 OAuth2 clientRegistrationId
+
+> 参考 Spring Cloud OpenFeign issue [#1270]
