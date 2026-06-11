@@ -6,7 +6,9 @@ tags: [patterns, spring-modulith, modular-monolith, architecture, spring-boot, d
 
 ## 概述
 
-Spring Modulith（当前最新 2.1.0-RC1，2026-04-24）是 Spring 官方提供的**模块化单体（Modular Monolith）** 框架。它在保持单体部署简单性的同时，通过强制模块边界、自动验证依赖方向、支持独立测试和模块级可观测性，解决了传统单体应用"大泥球"问题。
+Spring Modulith（当前最新 2.1.0 GA，2026-06-11）是 Spring 官方提供的**模块化单体（Modular Monolith）** 框架。它在保持单体部署简单性的同时，通过强制模块边界、自动验证依赖方向、支持独立测试和模块级可观测性，解决了传统单体应用"大泥球"问题。
+
+> **2.1.0 GA 新增**：内建事务性发件箱（Outbox）支持，通过 Namastack 集成和 JobRunr 外部化实现可靠事件发布，详见 [`spring-modulith-outbox.md`](spring-modulith-outbox.md)。
 
 > 模块化单体是一种中间架构——在单体部署的便利性和微服务的清晰边界之间取得平衡。当性能要求提升或团队规模扩大时，模块可以平滑拆分为独立微服务。
 
@@ -224,7 +226,7 @@ management.tracing.enabled: true
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-bom</artifactId>
-            <version>2.1.0-RC1</version>
+            <version>2.1.0</version>
             <scope>import</scope>
             <type>pom</type>
         </dependency>
