@@ -6,9 +6,13 @@ tags: [tools, spring-boot, spring-boot-41, redis, kafka, grpc, webflux]
 
 ## 概述
 
-Spring Boot 4.1.0-RC1（2026-04-23 发布）在 4.0 稳定版基础上引入了多项新特性，包括 **Redis 注解驱动监听器**、**KafkaTemplate 配置增强**、**Webflux HTML 转义** 与 **gRPC 原生支持**。
+Spring Boot 4.1.0 GA（2026-06-10 发布）在 4.0 稳定版基础上引入了多项新特性，包括 **Redis 注解驱动监听器**、**KafkaTemplate 配置增强**、**Webflux HTML 转义** 与 **gRPC 原生支持**。
 
 > gRPC 原生集成的详细内容请参见 `spring-boot-41-grpc-support.md`，本文聚焦其他新增特性。
+
+### 安全更新 ⚠️
+
+4.1.0 GA 基于 Spring Framework 7.0.8，**修复了 16 个 CVE 漏洞**，包括 WebSocket Session 可预测、SpEL 任意方法调用、Jackson 反序列化 RCE 等高危问题。详见 [`spring-framework-708-cve.md`](spring-framework-708-cve.md)。
 
 ## 一、Redis 注解驱动监听器（`@RedisListener`）
 
