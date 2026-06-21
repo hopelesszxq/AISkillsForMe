@@ -1,12 +1,12 @@
 ---
 name: gateway-434-501-features
-description: Spring Cloud Gateway 4.3.4 & 5.0.1 新特性：Forwarded Header RFC 7239、MVC CircuitBreaker、毫秒级时间谓词
-tags: [spring-cloud, gateway, circuit-breaker, mvc, rfc7239, migration]
+description: Spring Cloud Gateway 4.3.4 & 5.0.x 新特性：Forwarded Header、MVC CircuitBreaker、StripContextPath、CodecCustomizer
+tags: [spring-cloud, gateway, circuit-breaker, mvc, rfc7239, strip-context-path, codec]
 ---
 
 ## 概述
 
-Spring Cloud Gateway 4.3.4（2026-04-01）和 5.0.1（2026-01-28）分别针对 4.3.x 和 5.0.x 系列进行了 Bug 修复和功能增强。5.0.x 作为 SC2025 之后的版本，引入了一些重要新特性。
+Spring Cloud Gateway 4.3.4（2026-04-01）和 5.0.x 系列分别针对 4.3.x 和 5.0.x 系列进行了 Bug 修复和功能增强。5.0.x 作为 SC2025 之后的版本，引入了一些重要新特性。
 
 ## Gateway 5.0.x 新特性
 
@@ -95,6 +95,60 @@ filters:
 ### v4.3.3 修复
 
 - **URL 编码参数处理**：修复 FormFilter 中 URL 编码参数处理错误
+
+## Gateway 5.0.2 新特性（2026-06-11）
+
+### 1. StripContextPath 过滤器
+
+当 WebMVC Gateway 配置了 `server.servlet.context-path` 时，`StripPrefix` 和 `RewritePath` 过滤器操作的是包含 context-path 的完整 URI，而 `Path` 路由谓词匹配的是去掉 context-path 后的路径，导致行为不一致。
+
+**新增 `StripContextPath` 过滤器**，在路径操作前先剥离 context-path：
+
+```yaml
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: app-service
+          uri: http://backend:8080
+          predicates:
+            - Path=/myapp/api/**
+          filters:
+            - StripContextPath  # ✅ 先剥离 /myapp 后再处理 StripPrefix
+            - StripPrefix=1
+```
+
+**工作原理**：
+
+```
+请求: /myapp/api/users/123
+       │
+       ▼ StripContextPath
+       /api/users/123          ← 剥离 /myapp 上下文路径
+       │
+       ▼ StripPrefix=1
+       /users/123              ← 正确剥离第一段
+```
+
+**注意**：仅在 WebMVC 模式下生效（Reactive 模式无 context-path 概念）。
+
+### 2. CodecCustomizer 支持 Body Filter 编码
+
+Body 过滤器（`ModifyRequestBody`、`ModifyResponseBody`）默认使用框架级 codec 配置。5.0.2 允许通过 `CodecCustomizer` Bean 自定义 body 编码：
+
+```java
+@Bean
+public CodecCustomizer bodyCodecCustomizer() {
+    return configurer -> {
+        configurer.customCodecs().register(new Jackson2JsonDecoder());
+    };
+}
+```
+
+**应用场景**：
+- 自定义 JSON 序列化/反序列化配置
+- 集成 protobuf、avro 等编解码器
+- 全局 codec 日志/监控
 
 ## Gateway v5.0.x 其他修复
 
